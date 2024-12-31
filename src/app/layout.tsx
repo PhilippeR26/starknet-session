@@ -1,10 +1,10 @@
-import { StarknetProvider } from '@/app/(site)/components/client/Starknet-provider';
-import './globals.css';
-import { Provider } from "@/components/ui/provider";
+import { StarknetProvider } from './components/client/Starknet-provider'
+import './globals.css'
+import { Provider } from "@/components/ui/provider"
 
 export const metadata = {
-  title: 'Starknet-Sessions',
-  description: 'Demo of Starknet sessions',
+  title: 'Starknet-Session',
+  description: 'Demo of Starknet session',
   icons: {
     icon: "./favicon.ico",
   },
