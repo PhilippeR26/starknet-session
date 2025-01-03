@@ -8,11 +8,6 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "browser": {
-    "fs": false,
-    "net":false,
-    "child_process":false
-  },
   "dependencies": {
     "@argent/x-sessions": "^7.0.0",
     "@chakra-ui/react": "^3.2.3",
