@@ -1,8 +1,10 @@
 "use client";
 
-import { Center } from "@chakra-ui/react";
+import { Box, Center } from "@chakra-ui/react";
 import ConnectWallet from "./ConnectWallet/ConnectWallet";
 import { useAccount, useNetwork } from "@starknet-react/core";
+import { Button } from "@/components/ui/button";
+import SessionManager from "./SessionManagement";
 
 export function DisplayConnected() {
     const { chain } = useNetwork();
@@ -14,10 +16,7 @@ export function DisplayConnected() {
                 <ConnectWallet></ConnectWallet>
             </Center>
             {address && (
-                <>
-                    <br />
-                    sfdggfdfgd
-                </>
+                <SessionManager></SessionManager>
             )
             }
         </>
