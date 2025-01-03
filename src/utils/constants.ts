@@ -16,3 +16,5 @@ export const RejectContractAddress: string[] = [
 export const accountClass = "0x061dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f" as const;
 
 export const compatibleApiVersions: string[]=["0.7"];
+
+export const SessionContractAddress = "0x015b164fa4f36b288e3600cc3d51408d33b8ed436fcb9a76b28631284a2f4713" as const;

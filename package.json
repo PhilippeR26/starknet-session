@@ -8,7 +8,13 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "browser": {
+    "fs": false,
+    "net":false,
+    "child_process":false
+  },
   "dependencies": {
+    "@argent/x-sessions": "^7.0.0",
     "@chakra-ui/react": "^3.2.3",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -30,14 +36,14 @@
     "react-icons": "^5.4.0",
     "server-only": "^0.0.1",
     "sharp": "^0.33.5",
-    "starknet": "^6.20.3",
+    "starknet": "https://github.com/PhilippeR26/starknet.js.git#620without-fetchCookie",
+    "starknet-devnet": "^0.2.2",
     "swr": "^2.2.5",
     "typescript": "^5.7.2",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
-    "encoding": "^0.1.13",
     "simple-zustand-devtools": "^1.1.0"
   },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c"
 }
