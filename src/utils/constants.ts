@@ -17,4 +17,4 @@ export const accountClass = "0x061dac032f228abef9c6626f995015233097ae253a7f72d68
 
 export const compatibleApiVersions: string[]=["0.7"];
 
-export const SessionContractAddress = "0x015b164fa4f36b288e3600cc3d51408d33b8ed436fcb9a76b28631284a2f4713" as const;
+export const CounterContractAddress = "0x0ec8f6c6e19d39d0c809b5cc721329d6e1263989bbd4bdc56c9c9f987f853bb" as const;
