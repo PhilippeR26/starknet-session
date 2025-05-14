@@ -1,32 +1,36 @@
-export const test1Abi= [
+import type { Abi } from "starknet";
+
+export const counterAbi: Abi = [
   {
     "type": "impl",
-    "name": "CounterContract",
-    "interface_name": "counter::counter::ICounter"
+    "name": "TestSession",
+    "interface_name": "session_test::ITestSession"
   },
   {
     "type": "interface",
-    "name": "counter::counter::ICounter",
+    "name": "session_test::ITestSession",
     "items": [
       {
         "type": "function",
-        "name": "increase_counter",
-        "inputs": [
-          {
-            "name": "amount",
-            "type": "core::felt252"
-          }
-        ],
+        "name": "increase",
+        "inputs": [],
         "outputs": [],
         "state_mutability": "external"
       },
       {
         "type": "function",
-        "name": "get_balance",
+        "name": "decrease",
+        "inputs": [],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "get_counter",
         "inputs": [],
         "outputs": [
           {
-            "type": "core::felt252"
+            "type": "core::integer::u128"
           }
         ],
         "state_mutability": "view"
@@ -34,18 +38,8 @@ export const test1Abi= [
     ]
   },
   {
-    "type": "constructor",
-    "name": "constructor",
-    "inputs": [
-      {
-        "name": "intial_value",
-        "type": "core::felt252"
-      }
-    ]
-  },
-  {
     "type": "event",
-    "name": "counter::counter::MyCounter::Event",
+    "name": "session_test::test_session::Event",
     "kind": "enum",
     "variants": []
   }
