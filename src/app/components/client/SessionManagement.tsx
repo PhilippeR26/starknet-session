@@ -1,7 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Box, Center, HStack } from "@chakra-ui/react";
+import { Box, Center, HStack, Button} from "@chakra-ui/react";
 import { useState } from "react";
 import OwnSession from "./Sessions/OwnSession";
 
@@ -11,6 +10,9 @@ export default function SessionManager() {
     return (
         <Box
             pt="4"
+            
+            mb={55}
+            pb={3}
         >
             {choice == 0 ? (
                 <>
@@ -44,13 +46,14 @@ export default function SessionManager() {
                     </>
                 ) : (
                     <>
+                    <Center>
                         choice 2
+                        </Center>
                     </>
                 )}
                 <Center>
                     <Button
                         variant="surface"
-                        ml={4}
                         mt={3}
                         px={5}
                         fontWeight='bold'
@@ -58,6 +61,8 @@ export default function SessionManager() {
                     >
                         Close Session
                     </Button>
+                    <div>
+                    </div>
                 </Center>
             </>
             )}

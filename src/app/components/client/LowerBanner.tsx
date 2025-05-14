@@ -8,7 +8,7 @@ export default function LowerBanner() {
       position={"fixed"}
       bottom="0%"
       width="100%"
-      marginTop="1"
+      mt={1}
       borderColor="black"
       borderWidth="0px"
       borderRadius="0"

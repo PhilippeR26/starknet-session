@@ -1,8 +1,7 @@
 "use client";
 import { counterAbi } from "@/app/contracts/abis/counter-abi";
-import { Button } from "@/components/ui/button";
 import styles from '@/app/page.module.css'
-import { addrETH, CounterContractAddress } from "@/utils/constants";
+import { addrETH, addrSTRK, CounterContractAddress } from "@/utils/constants";
 import { formatBalance } from "@/utils/utils";
 import {
     SignSessionError,
@@ -14,13 +13,14 @@ import {
     createSessionRequest,
     type SessionRequest,
 } from "@argent/x-sessions"
-import { Box, Center, Text, VStack } from "@chakra-ui/react";
+import { Box, Center, Text, VStack, Button } from "@chakra-ui/react";
 import { useAccount, useProvider, useSignTypedData, useReadContract, useNetwork, useContract, useSendTransaction, useTransactionReceipt } from "@starknet-react/core";
 import { SquareMinus, SquarePlus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { constants, ec, stark, type Account, type Call } from "starknet";
+import { constants, ec, RpcProvider, stark, type Account, type Call, type InvokeFunctionResponse, type SuccessfulTransactionReceiptResponse } from "starknet";
 
 const maxFee: bigint = (2n * 10n ** 15n); // session fees in wei
+const duration: number = 5; // session duration in minutes
 
 export default function OwnSession() {
     const [sessionKey, setSessionKey] = useState<SessionKey | undefined>(undefined);
@@ -34,7 +34,8 @@ export default function OwnSession() {
 
     // const myProvider = new RpcProvider({ nodeUrl: "http://127.0.0.1:5050/rpc" });
 
-    const { provider } = useProvider();
+    // const { provider } = useProvider();
+    const provider = new RpcProvider({ nodeUrl: "https://free-rpc.nethermind.io/sepolia-juno/v0_7", specVersion: "0.7.1" });
     const { chain } = useNetwork();
     const { data: bal, isSuccess } = useReadContract({
         abi: counterAbi,
@@ -57,31 +58,68 @@ export default function OwnSession() {
         if (contract !== undefined) {
             setIsNewTxAuthorized(false);
             const increaseCall: Call = contract?.populate("increase", []);
-            const res = await sendAsync([increaseCall]);
-
-            console.log("increase", { res });
-            setCounter(counter + 1n);
-            const txR = await provider.waitForTransaction(res.transaction_hash, { retryInterval: 2000 });
-            setIsNewTxAuthorized(true);
-            if (txR.isSuccess()) {
-                setRemainingFee(remainingFee - BigInt(txR.actual_fee.amount));
+            try {
+                console.log("try to increase...")
+                if (sessionAccount) {
+                    console.log("Increase...")
+                    // V1 transaction (ETH fees)
+                    const estimationFees = await sessionAccount.estimateFee(increaseCall, { version: 1 });
+                    console.log("estimationFees", estimationFees);
+                    const increasedFees = stark.estimatedFeeToMaxFee(estimationFees.suggestedMaxFee, 50)
+                    const res = await sessionAccount.execute(
+                        increaseCall,
+                        {
+                            version: 1,
+                            maxFee: 224005303668n
+                        }
+                    );
+                    console.log("increase", { res });
+                    setCounter(counter + 1n);
+                    const txR = await provider.waitForTransaction(res.transaction_hash, { retryInterval: 2000 });
+                    setIsNewTxAuthorized(true);
+                    if (txR.isSuccess()) {
+                        setRemainingFee(remainingFee - BigInt((txR.value as SuccessfulTransactionReceiptResponse).actual_fee.amount));
+                    }
+                }
+            } catch (err: any) {
+                setIsNewTxAuthorized(true);
+                throw new Error(err);
             }
         }
     }
 
     async function decrease() {
         if (contract !== undefined) {
-            setIsNewTxAuthorized(false);
-            const decreaseCall: Call = contract?.populate("decrease", []);
-            const res = await sendAsync([decreaseCall]);
-            console.log("decrease", { res });
-            setCounter(counter - 1n);
-            const txR = await provider.waitForTransaction(res.transaction_hash, { retryInterval: 2000 });
-            setIsNewTxAuthorized(true);
-            if (txR.isSuccess()) {
-                setRemainingFee(remainingFee - BigInt(txR.actual_fee.amount));
+           setIsNewTxAuthorized(false);
+            const increaseCall: Call = contract?.populate("decrease", []);
+            try {
+                console.log("try to decrease...")
+                if (sessionAccount) {
+                    console.log("Decrease...")
+                    // V1 transaction (ETH fees)
+                    const estimationFees = await sessionAccount.estimateFee(increaseCall, { version: 1 });
+                    console.log("estimationFees", estimationFees);
+                    const increasedFees = stark.estimatedFeeToMaxFee(estimationFees.suggestedMaxFee, 50)
+                    const res = await sessionAccount.execute(
+                        increaseCall,
+                        {
+                            version: 1,
+                            maxFee: 224005303668n
+                        }
+                    );
+                    console.log("decrease", { res });
+                    setCounter(counter - 1n);
+                    const txR = await provider.waitForTransaction(res.transaction_hash, { retryInterval: 2000 });
+                    setIsNewTxAuthorized(true);
+                    if (txR.isSuccess()) {
+                        setRemainingFee(remainingFee - BigInt((txR.value as SuccessfulTransactionReceiptResponse).actual_fee.amount));
+                    }
+                }
+            } catch (err: any) {
+                setIsNewTxAuthorized(true);
+                throw new Error(err);
             }
-        }
+       }
     }
 
     // creation of session key
@@ -111,12 +149,12 @@ export default function OwnSession() {
 
     // initialization of session
     useEffect(() => {
+        console.log("#####address changed =", sessionKey, address, sessionAccount);
         async function sessionReq() {
-            console.log("address changed =", address);
             if ((sessionKey !== undefined) && address && (sessionAccount === undefined)) {
                 console.log("address changed and test OK");
 
-                const endDate: number = Math.floor((Date.now() + 1000 * 60 * 60) / 1000); // 1 hour
+                const endDate: number = Math.floor((Date.now() + 1000 * 60 * duration) / 1000);
                 setDateEndSession(endDate);
                 const sessionParams: CreateSessionParams = {
                     allowedMethods: [{
@@ -160,7 +198,10 @@ export default function OwnSession() {
                         session,
                         sessionKey,
                         provider,
+
                     });
+                    const txV = sessionAccount0.transactionVersion;
+                    console.log("tx version =", txV);
                     setSessionAccount(sessionAccount0);
                     console.log("sessionAccount Created");
                     setIsSessionSigned(true);
@@ -169,20 +210,21 @@ export default function OwnSession() {
 
 
             // This transaction failed as the cosigner could not provide a valid signature. Please contact support.
-            sessionReq().catch(console.error);
         }
+        sessionReq().catch(console.error);
 
         return () => { }
     },
-        [address]
+        [address, sessionKey, chain.id, sessionAccount]
     );
 
     // timer for remaining time of session
     useEffect(() => {
         async function sessionTimer() {
+            // console.log("sessionTimer");
             if (dateEndSession) {
                 const now = Math.floor(Date.now() / 1000);
-                setRemainingTime(dateEndSession - now);
+                setRemainingTime((dateEndSession - now) / 60);
             }
         }
         sessionTimer()
@@ -190,7 +232,7 @@ export default function OwnSession() {
             sessionTimer()
             console.log("remaining timerId=", tim);
         }
-            , 60 * 1_000 //ms
+            , 10 * 1_000 //ms
         );
         console.log("remaining startTimer", tim);
 
@@ -199,12 +241,12 @@ export default function OwnSession() {
             console.log("remaining stopTimer", tim);
         }
     }
-        , []);
+        , [dateEndSession]);
 
 
     return (
         <>
-            {!isSessionSigned && (
+            {isSessionSigned ? (
                 <Center>
                     <VStack>
                         <Text textAlign={"center"}>
@@ -213,13 +255,13 @@ export default function OwnSession() {
                             Session using fees from your own account.
                             <br></br>
                             Remaining fees in this session : {" "}
-                            <span className={remainingFee < 10n ** 13n ? styles.red : ""}>
+                            <span className={remainingFee < (10n ** 13n) ? styles.red : ""}>
                                 {formatBalance(remainingFee, 18) + " "}
-                                ETH
+                                STRK
                             </span>
                             <br></br>
                             Remaining time :{" "}<span className={remainingTime < 2 ? styles.red : ""}>
-                                {remainingTime}'
+                                {remainingTime>0?remainingTime+"'":"Ended"}
                             </span>
                         </Text>
                         <Box
@@ -266,7 +308,11 @@ export default function OwnSession() {
                             <SquareMinus />
                             decrease counter</Button>
                     </VStack>
-                </Center>)
+                </Center>) :(
+                    <Center color={"red"}>
+                        Approve amount in Argent-X wallet...
+                    </Center>
+                )
             }
         </>
     )

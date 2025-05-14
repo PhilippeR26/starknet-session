@@ -1,8 +1,7 @@
 "use client";
 
 import { useStoreWallet } from './walletContext';
-import { Center } from "@chakra-ui/react";
-import { Button } from "@/components/ui/button";
+import { Center,Button } from "@chakra-ui/react";
 import { useAccount, useDisconnect } from "@starknet-react/core";
 import SelectWallet from './SelectWallet';
 

@@ -1,6 +1,4 @@
-import { Image, StackSeparator, VStack, useDisclosure } from "@chakra-ui/react";
-import {
-  DialogActionTrigger,
+import {DialogActionTrigger,
   DialogBody,
   DialogCloseTrigger,
   DialogContent,
@@ -8,9 +6,7 @@ import {
   DialogHeader,
   DialogRoot,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+  DialogTrigger, Image, StackSeparator, VStack, useDisclosure, Button} from "@chakra-ui/react";
 import { useStoreWallet } from "./walletContext";
 import { useEffect } from "react";
 import { useAccount, useConnect, useProvider, type Connector } from "@starknet-react/core";
