@@ -70,7 +70,7 @@ export default function OwnSession() {
                         increaseCall,
                         {
                             version: 1,
-                            maxFee: 224005303668n
+                            maxFee: increasedFees
                         }
                     );
                     console.log("increase", { res });
@@ -104,7 +104,7 @@ export default function OwnSession() {
                         increaseCall,
                         {
                             version: 1,
-                            maxFee: 224005303668n
+                            maxFee: increasedFees
                         }
                     );
                     console.log("decrease", { res });
