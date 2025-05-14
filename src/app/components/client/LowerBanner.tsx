@@ -21,9 +21,9 @@ export default function LowerBanner() {
       color="grey.800"
     >
       Powered by{" "}
-      <Link color="blue.700" href='https://starknetjs.com' > Starknet.js v6.20.3<SquareArrowOutUpRight margin-left="2px" /></Link>
+      <Link color="blue.700" href='https://starknetjs.com' > Starknet.js v6.24.0<SquareArrowOutUpRight margin-left="2px" /></Link>
       ,{" "}
-      <Link color="blue.700" href='https://www.starknet-react.com/docs/getting-started' > starknet-react v3.6.2<SquareArrowOutUpRight margin-left="2px" /></Link>
+      <Link color="blue.700" href='https://www.starknet-react.com/docs/getting-started' > starknet-react v3.7.4<SquareArrowOutUpRight margin-left="2px" /></Link>
       {" "} and {" "}
       <Link color="blue.700" href='https://docs.argent.xyz/aa-use-cases/session-keys' > ArgentX session<SquareArrowOutUpRight margin-left="2px" /></Link>
       . {" "}
